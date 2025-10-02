@@ -1,0 +1,10 @@
+---
+title: "p8105_hw3_hc3654"
+output: html_document
+---
+
+```{r}
+library(p8105.datasets)
+data("instacart")
+```
+
