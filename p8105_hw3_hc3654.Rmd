@@ -1,10 +1,84 @@
 ---
 title: "p8105_hw3_hc3654"
-output: html_document
+output: github_document
 ---
 
 ```{r}
 library(p8105.datasets)
 data("instacart")
 ```
+
+
+## Problem 1:
+
+# Q1: How many aisles are there, and which aisles are the most items ordered from?
+
+```{r}
+p1q1 <- instacart |> 
+  group_by(aisle) |> 
+  summarise(Total_order = n()) |> 
+  arrange(desc(Total_order))
+
+p1q1
+```
+# Q2: Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
+
+```{r}
+p1q2 <- 
+p1q1 |> 
+  filter(Total_order > 10000) |> 
+  ggplot(aes(x = reorder(aisle,Total_order), y = Total_order,fill = Total_order))+
+           geom_col()+
+  coord_flip()+
+  labs(
+    x = "Aisle", y = "Total_order", title = "Figure shows the relates with aisle and their order among")
+p1q2
+  
+  
+```
+# Q3: Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table
+
+```{r}
+p1q3 <- instacart |> 
+  group_by(aisle,product_name) |> 
+  summarise(product_sale = n()) |> 
+  arrange(aisle, desc(product_sale)) |> 
+  slice_head(n = 3)
+
+p1q3
+```
+
+# Q4: Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
+```{r}
+p1q4 <- instacart |> 
+  filter(product_name == "Pink Lady Apples" | product_name == "Coffee Ice Cream") |> 
+  group_by(product_name, order_dow) |> 
+  summarise(mean_hour = mean(order_hour_of_day)) |> 
+  pivot_wider(
+  names_from = order_dow,
+  values_from = mean_hour
+  ) 
+
+           
+knitr::kable(p1q4,
+             col.names = c("Product","Sunday", "Monday", "Tuesday", "Wednesday", "Thursday","Friday", "Saturday"))
+
+```
+
+## Problem 4:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
