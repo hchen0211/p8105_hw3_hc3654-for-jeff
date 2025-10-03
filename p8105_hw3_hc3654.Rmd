@@ -5,6 +5,7 @@ output: github_document
 
 ```{r}
 library(p8105.datasets)
+library(tidyverse)
 data("instacart")
 ```
 
@@ -65,15 +66,121 @@ knitr::kable(p1q4,
 
 ```
 
-## Problem 4:
+## Problem 2:
+
+# 1.Import datasets
+
+```{r}
+ny_zillow_df <- 
+  read_csv("zillow_data/Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv",na = c("NA", ".", " "))
+
+zip_df <- 
+  read_csv("zillow_data/Zip Codes.csv")
+
+```
+
+# Q1: There are 116 months between January 2015 and August 2024. How many ZIP codes are observed 116 times? How many are observed fewer than 10 times? Why are some ZIP codes are observed rarely and others observed in each month?
+
+```{r}
+p2 <- ny_zillow_df |> 
+  janitor::clean_names() |> 
+  pivot_longer(
+    cols = x2015_01_31 : x2024_08_31,
+    names_to = "date",
+    values_to = "rental_fee"
+  ) |> 
+  mutate(date = sub("x", "",date))
+
+p2q1 <-  p2 |> 
+  group_by(region_name) |>
+  summarise(n_months = sum(!is.na(rental_fee)), .groups = "drop")
 
 
+obs116 <- p2q1 |> 
+  filter(n_months == 116) |> 
+  count()
 
 
+obs10 <- p2q1 |> 
+  filter(n_months < 10) |> 
+  count()
+
+p2q1 <- bind_cols(obs116,obs10)
+knitr::kable(p2q1, col.names = c("Full months", "Less than 10"))
+```
+
+# Q2: Create a reader-friendly table showing the average rental price in each borough and year (not month). Comment on trends in this table.
+
+```{r}
+p2q2 <- p2 |> 
+  separate(date, into = c("year", "month", "day"),sep = "_") |> 
+  group_by(year, county_name) |> 
+  summarise(avg_rental = mean(rental_fee, na.rm = TRUE)) 
+p2q2
+```
+
+# Q3: Make a plot showing NYC Rental Prices within ZIP codes for all available years. Your plot should facilitate comparisons across boroughs. Comment on any significant elements of this plot.
+
+```{r}
+
+p2g1 <- 
+p2 |> 
+  group_by(region_name, date, county_name) |> 
+  summarise(avg_price = mean(rental_fee, na.rm = TRUE), .groups = "drop") |> 
+  mutate(date = ymd(date))|> 
+  ggplot(aes(x = date, y = avg_price, group = region_name, color = avg_price)) +
+  geom_line(alpha = 0.5)+
+  scale_x_date(
+  breaks = as.Date(c("2015-01-01", "2018-01-01", "2021-01-01", "2024-01-01")),
+  labels = c("2015", "2019", "2021", "2024")
+)+
+  geom_smooth(aes(group = county_name), method = "loess", se = FALSE, size = 1.2, color = "orange", alpha = 0.6)+
+
+  theme(
+  axis.text.x = element_text(angle = 45, hjust = 1) 
+)+
+  facet_grid(~county_name)+
+  labs( x= "Average Price", y = "Time", title = "Average Rental Price Over Time Separated by County" )
+
+p2g1
+
+```
+
+# Q4: Compute the average rental price within each ZIP code over each month in 2023. Make a reader-friendly plot showing the distribution of ZIP-code-level rental prices across boroughs; put differently, your plot should facilitate the comparison of the distribution of average rental prices across boroughs. Comment on this plot
+
+```{r}
+p2g2 <- p2 |> 
+  separate(date, into = c("year", "month", "day"),sep = "_") |> 
+  filter(year == 2023) |> 
+  group_by(region_name, month, county_name) |> 
+  summarise(avg_price = mean(rental_fee, na.rm = TRUE)) |> 
+  ggplot(aes(x = as.numeric(month), y = avg_price, group = region_name,color = avg_price))+
+  geom_line()+
+  geom_smooth(aes(group = county_name), method = "loess", se = FALSE, size = 1.2, color = "green", alpha = 0.6)+
+  facet_grid(~ county_name)+
+  scale_x_continuous(breaks = c(1,3,6,9,12))+
+  labs(x = "Month", y = "Average Rental Fee", Title = "Relationship between Average Rental Fee and Month")
+
+p2g2
+```
 
 
+# Q5: Combination
+```{r}
+library(patchwork)
+
+combined <- p2g1 / p2g2 
+if (!dir.exists("results")) dir.create("results")
+ggsave("results/combined_plot.png", combined, width = 12, height = 10, dpi = 300)
+
+```
 
 
+## Problem 3:
+
+```{r}
+
+```
 
 
 
