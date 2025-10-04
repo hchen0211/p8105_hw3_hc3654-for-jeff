@@ -10,9 +10,9 @@ data("instacart")
 ```
 
 
-## Problem 1:
+# Problem 1:
 
-# Q1: How many aisles are there, and which aisles are the most items ordered from?
+## Q1: How many aisles are there, and which aisles are the most items ordered from?
 
 ```{r}
 p1q1 <- instacart |> 
@@ -22,22 +22,30 @@ p1q1 <- instacart |>
 
 p1q1
 ```
-# Q2: Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
+**Comment:** There are 134 distinct aisles, and the **Fresh Vegetable** have the most items ordered from. 
+
+
+## Q2: Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
 
 ```{r}
 p1q2 <- 
 p1q1 |> 
-  filter(Total_order > 10000) |> 
+  filter(Total_order > 10000)|> 
   ggplot(aes(x = reorder(aisle,Total_order), y = Total_order,fill = Total_order))+
            geom_col()+
   coord_flip()+
   labs(
-    x = "Aisle", y = "Total_order", title = "Figure shows the relates with aisle and their order among")
+    x = "Aisle", y = "Total orders", title = "Figure shows the relates with aisle and their order among")
 p1q2
+
   
   
 ```
-# Q3: Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table
+
+**Comment:** Here is the graph for the aisles which more than 10000 orders. We can see there are total **39** aisles are in the graph. 
+
+
+## Q3: Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table
 
 ```{r}
 p1q3 <- instacart |> 
@@ -48,8 +56,10 @@ p1q3 <- instacart |>
 
 p1q3
 ```
+**Comment:** Here is the table for the top 3 popular product for each aisle and their times by order. For example: The top 3 item for asian foods are Organic Sea Salt Roasted seaweed Snacks, Sriracha Chili Sauce and Coconut Milk, there are 345, 188, and 185 respectively.
 
-# Q4: Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
+
+## Q4: Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
 ```{r}
 p1q4 <- instacart |> 
   filter(product_name == "Pink Lady Apples" | product_name == "Coffee Ice Cream") |> 
@@ -65,10 +75,11 @@ knitr::kable(p1q4,
              col.names = c("Product","Sunday", "Monday", "Tuesday", "Wednesday", "Thursday","Friday", "Saturday"))
 
 ```
+**Comment:** Here is the readers table showing the mean hour for Coffee Ice and Pnnk Lady Apples are orderd on each day of the week.The most ordered day for Coffee Ice Cream is **Tuesday** and the least is **Friday**. The most ordered day for Pink Lady Apples are **Wednesday **and the least is **Monday**.
 
-## Problem 2:
+# Problem 2:
 
-# 1.Import datasets
+## 1.Import datasets
 
 ```{r}
 ny_zillow_df <- 
@@ -79,7 +90,7 @@ zip_df <-
 
 ```
 
-# Q1: There are 116 months between January 2015 and August 2024. How many ZIP codes are observed 116 times? How many are observed fewer than 10 times? Why are some ZIP codes are observed rarely and others observed in each month?
+## Q1: There are 116 months between January 2015 and August 2024. How many ZIP codes are observed 116 times? How many are observed fewer than 10 times? Why are some ZIP codes are observed rarely and others observed in each month?
 
 ```{r}
 p2 <- ny_zillow_df |> 
@@ -108,18 +119,27 @@ obs10 <- p2q1 |>
 p2q1 <- bind_cols(obs116,obs10)
 knitr::kable(p2q1, col.names = c("Full months", "Less than 10"))
 ```
+**Comment:** During January 2015 and August 2024. There are **48** zip codes are observed 116 months times and **26** zip codes are observed less than 10 months.
 
-# Q2: Create a reader-friendly table showing the average rental price in each borough and year (not month). Comment on trends in this table.
+
+## Q2: Create a reader-friendly table showing the average rental price in each borough and year (not month). Comment on trends in this table.
 
 ```{r}
 p2q2 <- p2 |> 
   separate(date, into = c("year", "month", "day"),sep = "_") |> 
   group_by(year, county_name) |> 
-  summarise(avg_rental = mean(rental_fee, na.rm = TRUE)) 
+  summarise(avg_rental = mean(rental_fee, na.rm = TRUE)) |> 
+  pivot_wider(
+    names_from = county_name,
+    values_from = avg_rental
+  )
 p2q2
 ```
 
-# Q3: Make a plot showing NYC Rental Prices within ZIP codes for all available years. Your plot should facilitate comparisons across boroughs. Comment on any significant elements of this plot.
+**Comment:** This table presents the average rental prices by borough from 2015 to 2024. Rental prices show an overall upward trend across all boroughs, though the pace differs by location. Richmond County has missing data from 2015–2019, but from 2020 onward, it follows a steady increase similar to other boroughs. New York County consistently records the highest rental prices, while Bronx County remains the most affordable. Minor fluctuations, particularly between 2019 and 2021, likely reflect the market disruptions caused by the COVID-19 pandemic.
+
+
+## Q3: Make a plot showing NYC Rental Prices within ZIP codes for all available years. Your plot should facilitate comparisons across boroughs. Comment on any significant elements of this plot.
 
 ```{r}
 
@@ -146,26 +166,34 @@ p2g1
 
 ```
 
-# Q4: Compute the average rental price within each ZIP code over each month in 2023. Make a reader-friendly plot showing the distribution of ZIP-code-level rental prices across boroughs; put differently, your plot should facilitate the comparison of the distribution of average rental prices across boroughs. Comment on this plot
+**Comment:** This plot illustrates the trends in NYC rental prices across ZIP codes over time, separated by boroughs. The smooth lines highlight the overall increase in rental prices, though the patterns vary across boroughs. During the COVID-19 pandemic period (around 2019–2021), there are noticeable fluctuations in several boroughs, reflecting market instability. New York County consistently shows the highest rental prices, with some ZIP codes averaging above $6000, which stands out significantly compared to other boroughs. This suggests that rental markets in Manhattan are driven by different economic factors than in the outer boroughs.
+
+
+
+## Q4: Compute the average rental price within each ZIP code over each month in 2023. Make a reader-friendly plot showing the distribution of ZIP-code-level rental prices across boroughs; put differently, your plot should facilitate the comparison of the distribution of average rental prices across boroughs. Comment on this plot
 
 ```{r}
 p2g2 <- p2 |> 
   separate(date, into = c("year", "month", "day"),sep = "_") |> 
   filter(year == 2023) |> 
   group_by(region_name, month, county_name) |> 
-  summarise(avg_price = mean(rental_fee, na.rm = TRUE)) |> 
+  summarise(avg_price = mean(rental_fee, na.rm = TRUE), .groups = "drop")|> 
   ggplot(aes(x = as.numeric(month), y = avg_price, group = region_name,color = avg_price))+
   geom_line()+
-  geom_smooth(aes(group = county_name), method = "loess", se = FALSE, size = 1.2, color = "green", alpha = 0.6)+
+  geom_smooth(aes(group = county_name), method = "loess", se = FALSE, size = 1.2, color = "yellow", alpha = 0.6)+
   facet_grid(~ county_name)+
   scale_x_continuous(breaks = c(1,3,6,9,12))+
-  labs(x = "Month", y = "Average Rental Fee", Title = "Relationship between Average Rental Fee and Month")
+  labs(x = "Month", y = "Average Rental Fee", Title = "Relationship between Average Rental Fee and Month")+
+  theme_bw() 
 
 p2g2
 ```
 
+**Comment:** From this plot, we see that average rental prices vary noticeably across boroughs. New York County (Manhattan) has the highest ZIP-code rental levels, often above $6000, while Bronx and Richmond Counties remain the lowest, around $2000–$2500. Across most boroughs, many ZIP codes show seasonal peaks in the fall, which may be linked to the timing of school and job cycles when demand for housing increases. In contrast, the high-priced ZIP codes in New York County do not follow this seasonal pattern, likely because rents there are driven more by professional demand and long-term residents rather than academic cycles.
 
-# Q5: Combination
+
+
+## Q5: Combination
 ```{r}
 library(patchwork)
 
@@ -176,14 +204,105 @@ ggsave("results/combined_plot.png", combined, width = 12, height = 10, dpi = 300
 ```
 
 
-## Problem 3:
+# Problem 3:
+
+```{r}
+accel_df <- 
+  read.csv("nhanes_accel.csv", na = c("NA",".", ""))
+
+covar_df <- 
+  read.csv("nhanes_covar.csv", skip = 4, na = c("NA",".", ""))|> 
+  na.omit() 
+
+p3 <- 
+  left_join(covar_df, accel_df, by = "SEQN") |> 
+  filter(age >= 21) |> 
+  mutate(sex = case_when(
+   sex == 1 ~ "male",
+   sex == 2 ~ "female"
+  ),
+    education = case_when(
+      education == 1 ~"Less than high school",
+      education == 2~ "High school equivalent",
+      education == 3 ~ "More than high school"
+    )
+  )
+```
+
+## Q1 : Produce a reader-friendly table for the number of men and women in each education category, and create a visualization of the age distributions for men and women in each education category. Comment on these items.
 
 ```{r}
 
+p3q1 <- p3 |> group_by(sex, education) |> 
+  summarise(number = n(), .groups = "drop") |> 
+  pivot_wider(
+    names_from = sex,
+    values_from = number
+  )
+
+p3g1 <- p3|> 
+  group_by(sex, education) |> 
+  summarise(number = n(), .groups = "drop") |> 
+  ggplot(aes(x = sex, y = number, fill = education)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.7)+
+  scale_fill_brewer(palette = "Set2")+
+  theme_bw()
+
+p3q1
+p3g1
+```
+
+**Comment:** From the table and visualization, we see that participants with **More than high school** education are the largest group for both men and women, while those with High school equivalent and Less than high school have fewer participants. The distribution suggests that the sample may be somewhat skewed toward higher education levels.
+When looking at age distributions by education and sex, men and women appear fairly similar across groups.
+
+## Q2: Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each participant. Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences. Comment on your plot.
+
+```{r}
+p3 |> 
+  rowwise() |> 
+  mutate(total = sum(c_across(min1:min1440))) |> 
+  select(-c(min1:min1440)) |> 
+  ggplot(aes(x = age, y = total, color = sex, shape = sex)) +
+   geom_smooth(se = FALSE) +
+  facet_wrap(~ education)+
+  geom_point(alpha = 0.6)+
+  theme_bw()
+```
+
+**Comment:** The graphs are separated into three panels by education level.
+1. For the High school equivalent group, female participants generally show higher daily activity than males across most ages. Activity levels peak around age 40 for both sexes and then gradually decline.
+2. For the Less than high school group, male participants tend to have higher daily activity than females, with both sexes peaking in activity between ages 20 and 30 before showing a steady decline.
+3. For the More than high school group, females consistently maintain higher daily activity than males across almost all ages, though both sexes show a relatively flat activity pattern compared to the other groups.
+
+## Q3: Accelerometer data allows the inspection activity over the course of the day. Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex. Describe in words any patterns or conclusions you can make based on this graph; including smooth trends may help identify differences.
+
+```{r}
+p3 |> 
+  select(-age,-BMI) |> 
+  pivot_longer(
+    cols = starts_with("min"),
+    names_to  = "minute",
+    values_to = "activity",
+    names_prefix = "min"
+  ) |> 
+  mutate(minute = as.integer(minute)) |> 
+  group_by(education, sex, minute) |> 
+  summarise(avg_activity = mean(activity), .groups = "drop") |> 
+  ggplot(aes(x = minute, y = avg_activity, color = sex))+
+  facet_wrap(~education)+
+  geom_line(linewidth = 0.9, alpha = 0.4) +
+  scale_color_manual(values = c(male = 'darkblue', female = "pink"))+
+  scale_x_continuous(
+    breaks = seq(0, 1440, by = 240),
+    labels = function(x) sprintf("%02d", x / 60))+
+  geom_smooth()+
+  labs(x = "Time in a day", y = "Activity", Title = "The activity distribution for a day seperate by different category")+
+  theme_bw()
+  
 ```
 
 
-
+**Comment:** This graph shows that across all three education levels, participants’ activity levels are lowest during the early morning hours (around 4 AM) and peak between approximately 8 AM and 8 PM, reflecting typical daily sleep–wake cycles. The smooth trends further suggest that women consistently exhibit slightly higher peak activity levels than men, particularly around midday and early afternoon. These differences, though modest, appear across all education groups, indicating that sex-related variation in activity is a general pattern rather than specific to a single education level.
 
 
 
