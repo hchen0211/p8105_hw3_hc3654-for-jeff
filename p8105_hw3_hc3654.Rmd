@@ -12,6 +12,10 @@ data("instacart")
 
 # Problem 1:
 
+## Describe dataset:
+This dataset mainly contains the order information from the instacart app. Some key values: user_id：unique identity of each customer, order_hour_of_day: record the time for order replace, order_dow: record the weekday for the order replace, product_name, aisle and which department the order item belong. From observation I found their are 49688 unique product, 134 unique aisle and 21 unique department in the dataset.
+
+
 ## Q1: How many aisles are there, and which aisles are the most items ordered from?
 
 ```{r}
@@ -22,7 +26,7 @@ p1q1 <- instacart |>
 
 p1q1
 ```
-**Comment:** There are 134 distinct aisles, and the **Fresh Vegetable** have the most items ordered from. 
+**Comment:** There are **134** distinct aisles, and the **Fresh Vegetable** have the most items ordered from. 
 
 
 ## Q2: Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
@@ -72,7 +76,7 @@ p1q4 <- instacart |>
 
            
 knitr::kable(p1q4,
-             col.names = c("Product","Sunday", "Monday", "Tuesday", "Wednesday", "Thursday","Friday", "Saturday"))
+             col.names = c("Product","Sunday", "Monday", "Tuesday", "Wednesday", "Thursday","Friday", "Saturday"), digits =2 )
 
 ```
 **Comment:** Here is the readers table showing the mean hour for Coffee Ice and Pnnk Lady Apples are orderd on each day of the week.The most ordered day for Coffee Ice Cream is **Tuesday** and the least is **Friday**. The most ordered day for Pink Lady Apples are **Wednesday **and the least is **Monday**.
